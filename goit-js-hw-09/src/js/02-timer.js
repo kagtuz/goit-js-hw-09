@@ -60,6 +60,24 @@ function inputHandler() {
   }
 }
 
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  // Remaining days
+  const days = Math.floor(ms / day);
+  // Remaining hours
+  const hours = Math.floor((ms % day) / hour);
+  // Remaining minutes
+  const minutes = Math.floor(((ms % day) % hour) / minute);
+  // Remaining seconds
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+
+  return { days, hours, minutes, seconds };
+}
 
 function startCountDownHandler() {
   const selectedDate = datePicker.selectedDates[0];
@@ -68,18 +86,11 @@ function startCountDownHandler() {
   btn.disabled = true;
   let timerId = setInterval(function () {
     let difference = new Date(selectedDate) - new Date();
-    dayField.innerHTML = addLeadingZero(
-      Math.floor(difference / (1000 * 60 * 60 * 24))
-    );
-    hourField.innerHTML = addLeadingZero(
-      Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    );
-    minuteField.innerHTML = addLeadingZero(
-      Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-    );
-    secondField.innerHTML = addLeadingZero(
-      Math.floor((difference % (1000 * 60)) / 1000)
-    );
+    const { days, hours, minutes, seconds } = convertMs(difference);
+    dayField.innerHTML = days
+    hourField.innerHTML = hours
+    minuteField.innerHTML = minutes
+    secondField.innerHTML = seconds
 
     if (difference < 1000) {
       clearInterval(timerId);
